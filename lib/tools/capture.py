@@ -21,8 +21,12 @@ import cv2
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 
 import config
-import face
+from face import FaceDetection
 
+face = FaceDetection(config.HAAR_SCALE_FACTOR,
+                     config.HAAR_MIN_NEIGHBORS_FACE,
+                     config.HAAR_MIN_SIZE_FACE,
+                     config.HAAR_FACES)
 
 def is_letter_input(letter):
     input_char = input()
@@ -61,7 +65,7 @@ def capture(preview):
             # Convert image to grayscale.
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
             # Get coordinates of single face in captured image.
-            result = face.detect_single(image,config.HAAR_SCALE_FACTOR,config.HAAR_MIN_NEIGHBORS_FACE,config.HAAR_MIN_SIZE_FACE,config.HAAR_FACES)
+            result = face.detect_single(image)
             if result is None:
                 print('Could not detect single face!'
                       + ' Check the image in capture.pgm'
@@ -107,7 +111,7 @@ def convert():
         image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         # TODO: check for multiple faces and warn
         # Get coordinates of single face in captured image.
-        result = face.detect_single(image,config.HAAR_SCALE_FACTOR,config.HAAR_MIN_NEIGHBORS_FACE,config.HAAR_MIN_SIZE_FACE,config.HAAR_FACES)
+        result = face.detect_single(image)
         if result is None:
             if (height + width > 800):
                 # it's a big image resize it and try again
@@ -116,14 +120,14 @@ def convert():
                       .format(height, width,
                               int(mult*height), int(mult*width)))
                 image2 = cv2.resize(image, None, fx=mult, fy=mult)
-                result = face.detect_single(image2,config.HAAR_SCALE_FACTOR,config.HAAR_MIN_NEIGHBORS_FACE,config.HAAR_MIN_SIZE_FACE,config.HAAR_FACES)
+                result = face.detect_single(image2)
                 if result is None:
                     mult = 0.25
                     print('Resizing from ({0},{1}) -> ({2},{3})'
                           .format(height, width,
                                   int(mult*height), int(mult*width)))
                     image2 = cv2.resize(image, None, fx=mult, fy=mult)
-                    result = face.detect_single(image2,config.HAAR_SCALE_FACTOR,config.HAAR_MIN_NEIGHBORS_FACE,config.HAAR_MIN_SIZE_FACE,config.HAAR_FACES)
+                    result = face.detect_single(image2)
                 if result is not None:
                     print('It worked, found a face in resized image!')
                     image = image2

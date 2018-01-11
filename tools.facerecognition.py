@@ -16,7 +16,7 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 """
 import cv2  # OpenCV Library
-import lib.common.face as face
+from lib.common.face import FaceDetection
 import lib.tools.config as config
 import time
 import os
@@ -24,6 +24,13 @@ import signal
 import sys
 
 model = config.model(config.RECOGNITION_ALGORITHM, config.POSITIVE_THRESHOLD)
+face = FaceDetection(config.HAAR_SCALE_FACTOR,
+                     config.HAAR_MIN_NEIGHBORS_FACE,
+                     config.HAAR_MIN_SIZE_FACE,
+                     config.HAAR_FACES,
+                     config.HAAR_MIN_NEIGHBORS_EYES, 
+                     config.HAAR_MIN_SIZE_EYES, 
+                     config.HAAR_EYES)
 
 # set preview to False to disable picamera preview
 preview = True
@@ -57,7 +64,7 @@ while True:
 
     image = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
-    faces = face.detect_faces(image,config.HAAR_SCALE_FACTOR,config.HAAR_MIN_NEIGHBORS_FACE,config.HAAR_MIN_SIZE_FACE,config.HAAR_FACES)
+    faces = face.detect_faces(image)
 
     if faces is not None:
         for i in range(0, len(faces)):
@@ -125,7 +132,7 @@ while True:
                         1)
             if h > 250:
                 # If person is close enough, mark the eyes
-                eyes = face.detect_eyes(face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w)), config.HAAR_SCALE_FACTOR, config.HAAR_MIN_NEIGHBORS_EYES, config.HAAR_MIN_SIZE_EYES, config.HAAR_EYES)
+                eyes = face.detect_eyes(face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w)))
                 for i in range(0, len(eyes)):
                     x, y, w, h = eyes[i]
                     cv2.rectangle(frame,

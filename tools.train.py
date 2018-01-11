@@ -29,7 +29,12 @@ import cv2
 import numpy as np
 
 import lib.tools.config as config
-import lib.common.face as face
+from lib.common.face import FaceDetection
+
+face = FaceDetection(config.HAAR_SCALE_FACTOR,
+                     config.HAAR_MIN_NEIGHBORS_FACE,
+                     config.HAAR_MIN_SIZE_FACE,
+                     config.HAAR_FACES)
 
 print("Which algorithm do you want to use?")
 print("[1] LBPHF (recommended)")

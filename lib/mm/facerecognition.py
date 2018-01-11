@@ -19,7 +19,7 @@ import os
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 import json
 import time
-import face as face
+from face import FaceDetection
 import cv2
 import config as config
 import signal
@@ -32,6 +32,7 @@ def to_node(type, message):
         pass
     # stdout has to be flushed manually to prevent delays in the node helper communication
     sys.stdout.flush()
+
 
 
 to_node("status", "Facerecognition started...")
@@ -74,6 +75,11 @@ signal.signal(signal.SIGINT, shutdown)
 # sleep for a second to let the camera warm up
 time.sleep(1)
 
+face = FaceDetection(config.HAAR_SCALE_FACTOR,
+                     config.HAAR_MIN_NEIGHBORS,
+                     config.HAAR_MIN_SIZE,
+                     config.HAAR_FACES)
+
 # Main Loop
 while True:
     # Sleep for x seconds specified in module config
@@ -85,7 +91,7 @@ while True:
         # Convert image to grayscale.
         image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
         # Get coordinates of single face in captured image.
-        result = face.detect_single(image,config.HAAR_SCALE_FACTOR, config.HAAR_MIN_NEIGHBORS, config.HAAR_MIN_SIZE,config.HAAR_FACES)
+        result = face.detect_single(image)
         # No face found, logout user?
         if result is None:
             # if last detection exceeds timeout and there is someone logged in -> logout!
