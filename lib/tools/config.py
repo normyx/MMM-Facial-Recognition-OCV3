@@ -106,11 +106,6 @@ def get_camera(preview=True):
         return webcam.OpenCVCapture(device_id=0)
 
 
-def is_cv2():
-    if CV_MAJOR_VER == 2:
-        return True
-    else:
-        return False
 
 
 def is_cv3():
@@ -128,22 +123,15 @@ def model(algorithm, thresh):
         if algorithm == 1:
             model = cv2.face.LBPHFaceRecognizer_create(threshold=thresh)
         elif algorithm == 2:
-            model = cv2.face.createFisherFaceRecognizer(threshold=thresh)
+            model = cv2.face.FisherFaceRecognizer_create(threshold=thresh)
         elif algorithm == 3:
-            model = cv2.face.createEigenFaceRecognizer(threshold=thresh)
+            model = cv2.face.EigenFaceRecognizer_create(threshold=thresh)
         else:
             print("WARNING: face algorithm must be in the range 1-3")
             os._exit(1)
     else:
-        if algorithm == 1:
-            model = cv2.createLBPHFaceRecognizer(threshold=thresh)
-        elif algorithm == 2:
-            model = cv2.createFisherFaceRecognizer(threshold=thresh)
-        elif algorithm == 3:
-            model = cv2.createEigenFaceRecognizer(threshold=thresh)
-        else:
-            print("WARNING: face algorithm must be in the range 1-3")
-            os._exit(1)
+        print("FATAL: OpenCV Major Version must be 3")
+        os._exit(1)
     return model
 
 
