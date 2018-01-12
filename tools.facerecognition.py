@@ -78,6 +78,7 @@ while True:
             # x and y coordinates of the face
             x_face = x
             y_face = y
+            print(int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
             if config.RECOGNITION_ALGORITHM == 1:
                 crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
             else:

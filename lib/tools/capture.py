@@ -20,7 +20,7 @@ import re
 import cv2
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 
-import config
+from . import config
 from face import FaceDetection
 
 face = FaceDetection(config.HAAR_SCALE_FACTOR,

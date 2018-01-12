@@ -101,8 +101,8 @@ class FaceDetection:
         return a smaller crop if the box is near the edge of the image.
         """
         midy = y + h / 2
-        y1 = max(0, midy - crop_height / 2)
-        y2 = min(image.shape[0] - 1, midy + crop_height / 2)
+        y1 = int(max(0, midy - crop_height / 2))
+        y2 = int(min(image.shape[0] - 1, midy + crop_height / 2))
         return image[y1:y2, x:x + w]
 
 
