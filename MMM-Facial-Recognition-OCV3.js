@@ -1,9 +1,9 @@
 /* global Module */
 
 /* Magic Mirror
- * Module: MMM-Facial-Recognition
+ * Module: MMM-Facial-Recognition-OC3
  *
- * By Paul-Vincent Roll http://paulvincentroll.com
+ * By Mathieu Goulène - Based on work made by Paul-Vincent Roll 
  * MIT Licensed.
  */
 

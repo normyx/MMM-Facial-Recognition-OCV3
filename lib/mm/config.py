@@ -29,7 +29,7 @@ FACE_HEIGHT = 112
 # Face detection cascade classifier configuration.
 # You don't need to modify this unless you know what you're doing.
 # See: http://docs.opencv.org/modules/objdetect/doc/cascade_classification.html
-HAAR_FACES = '/home/pi/MagicMirror/modules/MMM-Facial-Recognition-OCV3/lib/resources/haarcascade_frontalface.xml'
+HAAR_FACES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/resources/haarcascade_frontalface.xml'
 HAAR_SCALE_FACTOR = 1.05
 HAAR_MIN_NEIGHBORS = 4
 HAAR_MIN_SIZE = (30, 30)
