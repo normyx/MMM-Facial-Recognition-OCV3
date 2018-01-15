@@ -10,15 +10,11 @@
 Module.register('MMM-Facial-Recognition-OCV3',{
 
 	defaults: {
-		// 1=LBPH | 2=Fisher | 3=Eigen
-		recognitionAlgorithm: 1,
 		// Threshold for the confidence of a recognized face before it's considered a
 		// positive match.  Confidence values below this threshold will be considered
 		// a positive match because the lower the confidence value, or distance, the
 		// more confident the algorithm is that the face was correctly detected.
 		lbphThreshold: 50,
-		fisherThreshold: 250,
-		eigenThreshold: 3000,
 		// force the use of a usb webcam on raspberry pi (on other platforms this is always true automatically)
 		useUSBCam: false,
 		// Path to your training xml

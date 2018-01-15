@@ -1,22 +1,10 @@
 #!/usr/bin/env python
 # coding: utf8
-"""MMM-Facial-Recognition - MagicMirror Module
-Face Recognition Training Script
+"""MMMM-Facial-Recognition-OCV3 - MagicMirror Module
 The MIT License (MIT)
 
-Copyright (c) 2016 Paul-Vincent Roll (MIT License)
-Based on work by Tony DiCola (Copyright 2013) (MIT License)
-
-Run this script to train the face recognition system with training images from multiple people.
-The face recognition model is based on the eigen faces algorithm implemented in OpenCV.
-You can find more details on the algorithm and face recognition here:
-http://docs.opencv.org/modules/contrib/doc/facerec/facerec_tutorial.html
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Copyright (c) 2018 Mathieu Goulène (MIT License)
+Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
 
 import fnmatch
@@ -36,13 +24,6 @@ face = FaceDetection(config.HAAR_SCALE_FACTOR,
                      config.HAAR_MIN_SIZE_FACE,
                      config.HAAR_FACES)
 
-print("Which algorithm do you want to use?")
-print("[1] LBPHF (recommended)")
-print("[2] Fisherfaces")
-print("[3] Eigenfaces")
-
-algorithm_choice = int(input("--> "))
-print('')
 
 
 def walk_files(directory, match='*'):
@@ -114,10 +95,9 @@ if __name__ == '__main__':
     # Train model
     print('-' * 20)
     print('')
-    print('Training model type {0} with threshold {1}'
-          .format(config.RECOGNITION_ALGORITHM, config.POSITIVE_THRESHOLD))
-
-    model = config.model(config.RECOGNITION_ALGORITHM, config.POSITIVE_THRESHOLD)
+    print('Training model with threshold {0}'
+          .format(config.POSITIVE_THRESHOLD))
+    model = config.model(config.POSITIVE_THRESHOLD)
 
     model.train(np.asarray(faces), np.asarray(labels))
 
@@ -126,4 +106,3 @@ if __name__ == '__main__':
     print('Training data saved to', config.TRAINING_FILE)
     print('')
     print("Please add or update (if you added new people not just new images) " + str(IMAGE_DIRS) + " inside config.js (mirror module) or config.py (model tester). You can change the names to whatever you want, just keep the same order and you'll be fine.")
-    print("Please add " + str(algorithm_choice) + " as your choosen algorithm inside config.js (mirror module) or config.py (model tester).")

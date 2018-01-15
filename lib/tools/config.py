@@ -1,11 +1,10 @@
 #!/usr/bin/env python
 # coding: utf8
-"""MMM-Facial-Recognition - MagicMirror Module
-Face Recognition training script config
+"""MMM-Facial-Recognition-OCV3 - MagicMirror Module
 The MIT License (MIT)
 
-Copyright (c) 2016 Paul-Vincent Roll (MIT License)
-Based on work by Tony DiCola (Copyright 2013) (MIT License)
+Copyright (c) 2018 Mathieu Goulène (MIT License)
+Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
 import inspect
 import os
@@ -19,31 +18,10 @@ import cv2
 _platform = platform.system().lower()
 path_to_file = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-RECOGNITION_ALGORITHM = 1
-POSITIVE_THRESHOLD = 80
+POSITIVE_THRESHOLD=80
 
 
-def set_recognition_algorithm(algorithm):
-    if algorithm < 1 or algorithm > 3:
-        print("WARNING: face algorithm must be in the range 1-3")
-        RECOGNITION_ALGORITHM = 1
-        os._exit(1)
-    RECOGNITION_ALGORITHM = algorithm
-    # Threshold for the confidence of a recognized face before it's
-    # considered a positive match.  Confidence values below this
-    # threshold will be considered a positive match because the lower
-    # the confidence value, or distance, the more confident the
-    # algorithm is that the face was correctly detected.  Start with a
-    # value of 3000, but you might need to tweak this value down if
-    # you're getting too many false positives (incorrectly recognized
-    # faces), or up if too many false negatives (undetected faces).
-    # POSITIVE_THRESHOLD = 3500.0
-    if RECOGNITION_ALGORITHM == 1:
-        POSITIVE_THRESHOLD = 80
-    elif RECOGNITION_ALGORITHM == 2:
-        POSITIVE_THRESHOLD = 250
-    else:
-        POSITIVE_THRESHOLD = 3000
+
 
 
 if ('FACE_USERS' in os.environ):
@@ -58,19 +36,10 @@ else:
              "User6", "User7", "User8", "User9", "User10"]
     print('Remember to set the name list environment variable FACE_USERS')
 
-# Edit the values below to configure the training and usage of the
-# face recognition box.
-if ('FACE_ALGORITHM' in os.environ):
-    set_recognition_algorithm(int(os.environ['FACE_ALGORITHM']))
-    print("Using FACE_ALGORITM: {0}".format(RECOGNITION_ALGORITHM))
-else:
-    set_recognition_algorithm(1)
-    print("Using default FACE_ALGORITM: {0}".format(RECOGNITION_ALGORITHM))
-
-
 # File to save and load face recognizer model.
 TRAINING_FILE = 'training.xml'
 TRAINING_DIR = './training_data/'
+
 
 # Size (in pixels) to resize images for training and prediction.
 # Don't change this unless you also change the size of the training images.
@@ -84,7 +53,7 @@ FACE_HEIGHT = 112
 #HAAR_FACES = 'lib/haarcascade_frontalface_alt2.xml'
 #HAAR_FACES = 'lib/haarcascade_frontalface_default.xml'
 HAAR_FACES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/resources/haarcascade_frontalface.xml'
-HAAR_EYES = '../resources/haarcascade_eye.xml'
+HAAR_EYES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/resources/haarcascade_eye.xml'
 HAAR_SCALE_FACTOR = 1.05
 HAAR_MIN_NEIGHBORS_FACE = 4     # 4 or 3 trainer/tester used different values.
 HAAR_MIN_NEIGHBORS_EYES = 2
@@ -115,20 +84,11 @@ def is_cv3():
         return False
 
 
-def model(algorithm, thresh):
+def model(thresh):
     # set the choosen algorithm
     model = None
     if is_cv3():
-        # OpenCV version renamed the face module
-        if algorithm == 1:
-            model = cv2.face.LBPHFaceRecognizer_create(threshold=thresh)
-        elif algorithm == 2:
-            model = cv2.face.FisherFaceRecognizer_create(threshold=thresh)
-        elif algorithm == 3:
-            model = cv2.face.EigenFaceRecognizer_create(threshold=thresh)
-        else:
-            print("WARNING: face algorithm must be in the range 1-3")
-            os._exit(1)
+        model = cv2.face.LBPHFaceRecognizer_create(threshold=thresh)
     else:
         print("FATAL: OpenCV Major Version must be 3")
         os._exit(1)

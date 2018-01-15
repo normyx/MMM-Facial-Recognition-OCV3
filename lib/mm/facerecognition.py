@@ -47,16 +47,8 @@ same_user_detected_in_row = 0
 # Load training data into model
 to_node("status", 'Loading training data...')
 
-# set algorithm to be used based on setting in config.js
-if config.get("recognitionAlgorithm") == 1:
-    to_node("status", "ALGORITHM: LBPH")
-    model = cv2.face.LBPHFaceRecognizer_create(threshold=config.get("lbphThreshold"))
-elif config.get("recognitionAlgorithm") == 2:
-    to_node("status", "ALGORITHM: Fisher")
-    model = cv2.FisherFaceRecognizer_create(threshold=config.get("fisherThreshold"))
-else:
-    to_node("status", "ALGORITHM: Eigen")
-    model = cv2.EigenFaceRecognizer_create(threshold=config.get("eigenThreshold"))
+# load the model
+model = cv2.face.LBPHFaceRecognizer_create(threshold=config.get("lbphThreshold"))
 
 # Load training file specified in config.js
 model.read(config.get("trainingFile"))
@@ -104,10 +96,7 @@ while True:
         # Set x,y coordinates, height and width from face detection result
         x, y, w, h = result
         # Crop image on face. If algorithm is not LBPH also resize because in all other algorithms image resolution has to be the same as training image resolution.
-        if config.get("recognitionAlgorithm") == 1:
-            crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
-        else:
-            crop = face.resize(face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w)), config.FACE_WIDTH)
+        crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
         # Test face against model.
         label, confidence = model.predict(crop)
         # We have a match if the label is not "-1" which equals unknown because of exceeded threshold and is not "0" which are negtive training images (see training folder).

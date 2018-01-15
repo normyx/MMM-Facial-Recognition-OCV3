@@ -1,7 +1,7 @@
 {
-  "name": "Magic-Mirror-Module-Facial-Recognition",
+  "name": "Magic-Mirror-Module-Facial-Recognition-OCV3",
   "version": "2.0.0",
-  "description": "Facial recognition and module swapping for the Magic Mirror.",
+  "description": "Facial recognition and module swapping for the Magic Mirror. Based on the work made : https://github.com/paviro/MMM-Facial-Recognition",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/paviro/MMM-Facial-Recognition"
@@ -12,13 +12,13 @@
     "Facial recognition",
     "module"
   ],
-  "author": "Paul-Vincent Roll",
-  "contributors": "https://github.com/paviro/MMM-Facial-Recognition/graphs/contributors",
+  "author": "Mathieu Goulène",
+  "contributors": "https://github.com/normyx/MMM-Facial-Recognition-OCV3/graphs/contributors",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/paviro/MMM-Facial-Recognition/issues"
+    "url": "https://github.com/normyx/MMM-Facial-Recognition-OCV3/issues"
   },
-  "homepage": "https://github.com/paviro/MMM-Facial-Recognition#readme",
+  "homepage": "https://github.com/normyx/MMM-Facial-Recognition-OCV3",
   "dependencies": {
     "python-shell": "latest"
     }

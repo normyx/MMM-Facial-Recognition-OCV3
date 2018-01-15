@@ -1,19 +1,10 @@
 #!/usr/bin/env python
 # coding: utf8
-"""MMM-Facial-Recognition - MagicMirror Module
-Face Recognition Testing Script
+"""MMM-Facial-Recognition-OCV3 - MagicMirror Module
 The MIT License (MIT)
 
-Copyright (c) 2016 Paul-Vincent Roll (MIT License)
-Based on work by Tony DiCola (Copyright 2013) (MIT License)
-
-Run this script to test your training data.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Copyright (c) 2018 Mathieu Goulène (MIT License)
+Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
 import cv2  # OpenCV Library
 from lib.common.face import FaceDetection
@@ -23,7 +14,7 @@ import os
 import signal
 import sys
 
-model = config.model(config.RECOGNITION_ALGORITHM, config.POSITIVE_THRESHOLD)
+model = config.model(config.POSITIVE_THRESHOLD)
 face = FaceDetection(config.HAAR_SCALE_FACTOR,
                      config.HAAR_MIN_NEIGHBORS_FACE,
                      config.HAAR_MIN_SIZE_FACE,
@@ -78,11 +69,7 @@ while True:
             # x and y coordinates of the face
             x_face = x
             y_face = y
-            print(int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
-            if config.RECOGNITION_ALGORITHM == 1:
-                crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
-            else:
-                crop = face.resize(face.crop(image, x, y, w, h))
+            crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
 			
 			# confidence the lower the stronger the match
 			
@@ -133,7 +120,7 @@ while True:
                         1)
             if h > 250:
                 # If person is close enough, mark the eyes
-                eyes = face.detect_eyes(face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w)))
+                eyes = face.detect_eyes(crop)
                 for i in range(0, len(eyes)):
                     x, y, w, h = eyes[i]
                     cv2.rectangle(frame,

@@ -1,8 +1,9 @@
-"""Raspberry Pi Face Recognition Treasure Box
-Face Detection Helper Functions
-Copyright 2013 Tony DiCola
+# coding: utf8
+"""MMM-Facial-Recognition-OCV3 - MagicMirror Module
+The MIT License (MIT)
 
-Functions to help with the detection and cropping of faces.
+Copyright (c) 2018 Mathieu Goulène (MIT License)
+Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
 
 import cv2
@@ -53,7 +54,7 @@ class FaceDetection:
                                             flags=cv2.CASCADE_SCALE_IMAGE)
         return faces
 
-    def detect_eyes(self, image,haar_scale_factor,haar_min_neighbors_eyes, haar_min_size_eyes, haar_eyes_file):
+    def detect_eyes(self, image):
         eyes = self.haar_eyes.detectMultiScale(image, 
                                           scaleFactor=self.haar_scale_factor,
                                           minNeighbors=self.haar_min_neighbors_eyes, 

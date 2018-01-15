@@ -1,19 +1,10 @@
 #!/usr/bin/env python
 # coding: utf8
-"""MMM-Facial-Recognition - MagicMirror Module
-Face Recognition image capture script
+"""MMM-Facial-Recognition-OCV3 - MagicMirror Module
 The MIT License (MIT)
 
-Copyright (c) 2016 Paul-Vincent Roll (MIT License)
-Based on work by Tony DiCola (Copyright 2013) (MIT License)
-
-Run this script to capture images for the training script.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+Copyright (c) 2018 Mathieu Goulène (MIT License)
+Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
 import lib.tools.capture as capture
 import lib.tools.config as config

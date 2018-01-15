@@ -7,9 +7,10 @@ This module is mainly inspired by the one developped by [paviro](https://github.
 This module uses the [OpenCV](https://opencv.org/) library and is only compatible with the v3 (only tested with the version 3.3 and the rest of the description is based on this version. Some adaptions will probably be needed to support other version).
 It has been adapted to :
 * Be able to support the v3.3.0 OpenCV version (the paviro one did not)
-* Merge the 2 projects [MMM-Facial-Recognition](https:https://github.com/paviro/MMM-Facial-Recognition) (MagicMirror module) and [MMM-Facial-Recognition-Tools](https://github.com/paviro/MMM-Facial-Recognition-Tools) (tools to capture and train the model) into one project
+* Merge the 2 projects [MMM-Facial-Recognition](https://github.com/paviro/MMM-Facial-Recognition) (MagicMirror module) and [MMM-Facial-Recognition-Tools](https://github.com/paviro/MMM-Facial-Recognition-Tools) (tools to capture and train the model) into one project
 * Mutualize some code and move some of into Classes
 * Explain the way to build and install OpenCV 3.3.0 (required, the version is not available into a repository)
+* Remove the Fisher and Eigen Algorithm that did not work well for Raspberry. Only LBPH Algorithm is usable.
 Get this module with the command line :
 ```shell=
 cd ~/MagicMirror/modules/
@@ -101,6 +102,8 @@ Install the need dependencies by running the command :
 npm install
 ```
 ## Capture and Train the model
+
+
 ### Capturing training images
 1. Run `python tools.capture.py`.
 1. Decide whether you want to capture images from your picam or convert existing .jpg images.
@@ -129,15 +132,11 @@ To setup the module in MagicMirror², add the following script int the `config.j
 {
     module: 'MMM-Facial-Recognition',
     config: {
-        // 1=LBPH | 2=Fisher | 3=Eigen
-        recognitionAlgorithm: 1,
         // Threshold for the confidence of a recognized face before it's considered a
         // positive match.  Confidence values below this threshold will be considered
         // a positive match because the lower the confidence value, or distance, the
         // more confident the algorithm is that the face was correctly detected.
         lbphThreshold: 80,
-        fisherThreshold: 250,
-        eigenThreshold: 3000,
         // force the use of a usb webcam on raspberry pi (on other platforms this is always true automatically)
         useUSBCam: false,
         // Path to your training xml
@@ -173,6 +172,10 @@ In order for this module to do anything useful you have to assign custom classes
     classes: 'name1'
 }
 ```
-
+# TODO
+* Explain removing the other algorithm
+* Explain the modification of haar file in mm/config.py
+* Move all script to OO Classes
+* Centralized the constant and params in only one config file
 [^first]: [Raspbian Stretch: Install OpenCV 3 + Python on your Raspberry Pi](https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/) give a complete and very detailed explaination to build OpenCV 3, but based on python work environment. The choice here is to build and install the library deeply in the raspberry system.
 [^second]: [How to easily install OpenCV 3+ on Raspberry Pi 2/3 in Raspbian ? (without using virtual environments)](http://pythonopencv.com/how-to-easily-install-opencv-3-on-raspberry-pi-23-in-raspbian-without-using-virtual-environments/) More synthetic but is adapted to be able to manage memory issues during compilation.
