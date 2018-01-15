@@ -19,12 +19,13 @@ import cv2
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 
 from . import config
+import commonconfig
 from face import FaceDetection
 
-face = FaceDetection(config.HAAR_SCALE_FACTOR,
-                     config.HAAR_MIN_NEIGHBORS_FACE,
-                     config.HAAR_MIN_SIZE_FACE,
-                     config.HAAR_FACES)
+face = FaceDetection(commonconfig.HAAR_SCALE_FACTOR,
+                     commonconfig.HAAR_MIN_NEIGHBORS_FACE,
+                     commonconfig.HAAR_MIN_SIZE_FACE,
+                     commonconfig.HAAR_FACES)
 
 def is_letter_input(letter):
     input_char = input()
@@ -73,7 +74,7 @@ def capture(preview):
             x, y, w, h = result
             # Crop image as close as possible to desired face aspect ratio.
             # Might be smaller if face is near edge of image.
-            crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
+            crop = face.crop(image, x, y, w, h,int((commonconfig.FACE_HEIGHT / float(commonconfig.FACE_WIDTH)) * w))
             # Save image to file.
             filename = os.path.join(config.TRAINING_DIR,
                                     CAPTURE_DIR,
@@ -135,7 +136,7 @@ def convert():
         x, y, w, h = result
         # Crop image as close as possible to desired face aspect ratio.
         # Might be smaller if face is near edge of image.
-        crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
+        crop = face.crop(image, x, y, w, h,int((commonconfig.FACE_HEIGHT / float(commonconfig.FACE_WIDTH)) * w))
         # Save image to file.
         filename = os.path.join(config.TRAINING_DIR,
                                 CAPTURE_DIR, '%03d.pgm' % count)

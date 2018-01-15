@@ -8,24 +8,25 @@ Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
 import cv2  # OpenCV Library
 from lib.common.face import FaceDetection
-import lib.tools.config as config
+import lib.tools.config as toolsconfig
+import lib.common.commonconfig as commonconfig
 import time
 import os
 import signal
 import sys
 
-model = config.model(config.POSITIVE_THRESHOLD)
-face = FaceDetection(config.HAAR_SCALE_FACTOR,
-                     config.HAAR_MIN_NEIGHBORS_FACE,
-                     config.HAAR_MIN_SIZE_FACE,
-                     config.HAAR_FACES,
-                     config.HAAR_MIN_NEIGHBORS_EYES, 
-                     config.HAAR_MIN_SIZE_EYES, 
-                     config.HAAR_EYES)
+model = commonconfig.model(toolsconfig.POSITIVE_THRESHOLD)
+face = FaceDetection(commonconfig.HAAR_SCALE_FACTOR,
+                     commonconfig.HAAR_MIN_NEIGHBORS_FACE,
+                     commonconfig.HAAR_MIN_SIZE_FACE,
+                     commonconfig.HAAR_FACES,
+                     commonconfig.HAAR_MIN_NEIGHBORS_EYES, 
+                     commonconfig.HAAR_MIN_SIZE_EYES, 
+                     commonconfig.HAAR_EYES)
 
 # set preview to False to disable picamera preview
 preview = True
-camera = config.get_camera(preview)
+camera = toolsconfig.get_camera(preview)
 
 print('Loading training data...')
 model.read("training.xml")
@@ -69,7 +70,7 @@ while True:
             # x and y coordinates of the face
             x_face = x
             y_face = y
-            crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
+            crop = face.crop(image, x, y, w, h,int((commonconfig.FACE_HEIGHT / float(commonconfig.FACE_WIDTH)) * w))
 			
 			# confidence the lower the stronger the match
 			
@@ -78,14 +79,14 @@ while True:
             match = "None"
             label_str = "None"
             if (label != -1 and label != 0):
-                label_str = config.user_label(label)
+                label_str = toolsconfig.user_label(label)
             print(confidence)
             # the closer confidence is to zer the stronger the match
-            if confidence < 0.6 * config.POSITIVE_THRESHOLD:
+            if confidence < 0.6 * toolsconfig.POSITIVE_THRESHOLD:
                 label_str = 'Strong:' + label_str
-            elif confidence < config.POSITIVE_THRESHOLD:
+            elif confidence < toolsconfig.POSITIVE_THRESHOLD:
                 label_str = 'Weak:' + label_str
-            elif confidence < 1.5 * config.POSITIVE_THRESHOLD:
+            elif confidence < 1.5 * toolsconfig.POSITIVE_THRESHOLD:
                 label_str = "Guess: " + label_str
             else:
                 lavel_str = "Unknown"

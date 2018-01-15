@@ -18,11 +18,12 @@ import numpy as np
 
 import lib.tools.config as config
 from lib.common.face import FaceDetection
+import lib.common.commonconfig as commonconfig
 
-face = FaceDetection(config.HAAR_SCALE_FACTOR,
-                     config.HAAR_MIN_NEIGHBORS_FACE,
-                     config.HAAR_MIN_SIZE_FACE,
-                     config.HAAR_FACES)
+face = FaceDetection(commonconfig.HAAR_SCALE_FACTOR,
+                     commonconfig.HAAR_MIN_NEIGHBORS_FACE,
+                     commonconfig.HAAR_MIN_SIZE_FACE,
+                     commonconfig.HAAR_FACES)
 
 
 
@@ -39,7 +40,7 @@ def prepare_image(filename):
     """Read an image as grayscale and resize it to the appropriate size for
     training the face recognition model.
     """
-    return face.resize(cv2.imread(filename, cv2.IMREAD_GRAYSCALE),config.FACE_WIDTH, config.FACE_HEIGHT)
+    return face.resize(cv2.imread(filename, cv2.IMREAD_GRAYSCALE),commonconfig.FACE_WIDTH, commonconfig.FACE_HEIGHT)
 
 
 def normalize(X, low, high, dtype=None):
@@ -97,7 +98,7 @@ if __name__ == '__main__':
     print('')
     print('Training model with threshold {0}'
           .format(config.POSITIVE_THRESHOLD))
-    model = config.model(config.POSITIVE_THRESHOLD)
+    model = commonconfig.model(config.POSITIVE_THRESHOLD)
 
     model.train(np.asarray(faces), np.asarray(labels))
 

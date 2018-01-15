@@ -20,6 +20,6 @@
   },
   "homepage": "https://github.com/normyx/MMM-Facial-Recognition-OCV3",
   "dependencies": {
-    "python-shell": "latest"
-    }
+    "python-shell": "^0.4.0"
+  }
 }

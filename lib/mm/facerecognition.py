@@ -21,7 +21,8 @@ import json
 import time
 from face import FaceDetection
 import cv2
-import config as config
+import config as mmconfig
+import commonconfig as commonconfig
 import signal
 
 def to_node(type, message):
@@ -48,14 +49,14 @@ same_user_detected_in_row = 0
 to_node("status", 'Loading training data...')
 
 # load the model
-model = cv2.face.LBPHFaceRecognizer_create(threshold=config.get("lbphThreshold"))
+model = cv2.face.LBPHFaceRecognizer_create(threshold=mmconfig.get("lbphThreshold"))
 
 # Load training file specified in config.js
-model.read(config.get("trainingFile"))
+model.read(mmconfig.get("trainingFile"))
 to_node("status", 'Training data loaded!')
 
 # get camera
-camera = config.get_camera()
+camera = mmconfig.get_camera()
 
 def shutdown(self, signum):
     to_node("status", 'Shutdown: Cleaning up camera...')
@@ -67,15 +68,15 @@ signal.signal(signal.SIGINT, shutdown)
 # sleep for a second to let the camera warm up
 time.sleep(1)
 
-face = FaceDetection(config.HAAR_SCALE_FACTOR,
-                     config.HAAR_MIN_NEIGHBORS,
-                     config.HAAR_MIN_SIZE,
-                     config.HAAR_FACES)
+face = FaceDetection(commonconfig.HAAR_SCALE_FACTOR,
+                     commonconfig.HAAR_MIN_NEIGHBORS_FACE,
+                     commonconfig.HAAR_MIN_SIZE_FACE,
+                     commonconfig.HAAR_FACES)
 
 # Main Loop
 while True:
     # Sleep for x seconds specified in module config
-    time.sleep(config.get("interval"))
+    time.sleep(mmconfig.get("interval"))
     # if detecion is true, will be used to disable detection if you use a PIR sensor and no motion is detected
     if detection_active is True:
         # Get image
@@ -87,7 +88,7 @@ while True:
         # No face found, logout user?
         if result is None:
             # if last detection exceeds timeout and there is someone logged in -> logout!
-            if (current_user is not None and time.time() - login_timestamp > config.get("logoutDelay")):
+            if (current_user is not None and time.time() - login_timestamp > mmconfig.get("logoutDelay")):
                 # callback logout to node helper
                 to_node("logout", {"user": current_user})
                 same_user_detected_in_row = 0
@@ -96,7 +97,7 @@ while True:
         # Set x,y coordinates, height and width from face detection result
         x, y, w, h = result
         # Crop image on face. If algorithm is not LBPH also resize because in all other algorithms image resolution has to be the same as training image resolution.
-        crop = face.crop(image, x, y, w, h,int((config.FACE_HEIGHT / float(config.FACE_WIDTH)) * w))
+        crop = face.crop(image, x, y, w, h,int((commonconfig.FACE_HEIGHT / float(commonconfig.FACE_WIDTH)) * w))
         # Test face against model.
         label, confidence = model.predict(crop)
         # We have a match if the label is not "-1" which equals unknown because of exceeded threshold and is not "0" which are negtive training images (see training folder).

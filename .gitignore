@@ -1,3 +1,4 @@
 *.pyc
 training.xml
 *~
+nodes_modules

@@ -21,18 +21,6 @@ sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+
 _platform = platform.uname()[4]
 path_to_file = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 
-# Size (in pixels) to resize images for training and prediction.
-# Don't change this unless you also change the size of the training images.
-FACE_WIDTH = 92
-FACE_HEIGHT = 112
-
-# Face detection cascade classifier configuration.
-# You don't need to modify this unless you know what you're doing.
-# See: http://docs.opencv.org/modules/objdetect/doc/cascade_classification.html
-HAAR_FACES = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/resources/haarcascade_frontalface.xml'
-HAAR_SCALE_FACTOR = 1.05
-HAAR_MIN_NEIGHBORS = 4
-HAAR_MIN_SIZE = (30, 30)
 
 CONFIG = json.loads(sys.argv[1]);
 
@@ -44,7 +32,7 @@ def get_camera():
     try:
         if get("useUSBCam") == False:
             import picam
-            to_node("status", "PiCam ausgewählt...")
+            to_node("status", "PiCam loaded...")
             cam = picam.OpenCVCapture()
             cam.start()
             return cam
@@ -52,6 +40,6 @@ def get_camera():
             raise Exception
     except Exception:
         import webcam
-        to_node("status", "Webcam ausgewählt...")
+        to_node("status", "Webcam loaded...")
         return webcam.OpenCVCapture(device_id=0)
     to_node("status", "-" * 20)
