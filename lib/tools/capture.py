@@ -18,109 +18,106 @@ import cv2
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 
 from config import ToolsConfig
-#import commonconfig
 from face import FaceDetection
 
-face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
+class ToolsCapture:
+    def __init__(self, capName=None):
+        self.face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
                      ToolsConfig.HAAR_MIN_NEIGHBORS_FACE,
                      ToolsConfig.HAAR_MIN_SIZE_FACE,
                      ToolsConfig.HAAR_FACES)
-
-def is_letter_input(letter):
-    input_char = input()
-    return input_char.lower()
+        self.captureName = capName
+                     
 
 
+    def capture(self):
+        toolsConfig = ToolsConfig(self.captureName)
+        camera = toolsConfig.getCamera()
+        print('Capturing positive training images.')
+        print('Press enter to capture an image.')
+        print('Press Ctrl-C to quit.')
+        while True:
+            try:
+                input()
+                print('Capturing image...')
+                image = camera.read()
+                # Convert image to grayscale.
+                image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+                # Get coordinates of single face in captured image.
+                result = self.face.detect_single(image)
+                if result is None:
+                    print('Could not detect single face!'
+                          + ' Check the image in capture.pgm'
+                          + ' to see what was captured and try'
+                          + ' again with only one face visible.')
+                    continue
+                x, y, w, h = result
+                # Crop image as close as possible to desired face aspect ratio.
+                # Might be smaller if face is near edge of image.
+                crop = self.face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
+                # Save image to file.
+                filename = toolsConfig.getNewCaptureFile()
+                cv2.imwrite(filename, crop)
+                print('Found face and wrote training image', filename)
+            except KeyboardInterrupt:
+                camera.stop()
+                break
 
 
-def capture(preview):
-    toolsConfig = ToolsConfig(CAPTURE_DIR)
-    camera = toolsConfig.getCamera(preview)
-    print('Capturing positive training images.')
-    print('Press enter to capture an image.')
-    print('Press Ctrl-C to quit.')
-    while True:
-        try:
-            input()
-            print('Capturing image...')
-            image = camera.read()
-            # Convert image to grayscale.
+    def convert(self, rawDir):
+       
+        # Create the directory for positive training images if it doesn't exist.
+        if not os.path.exists(ToolsConfig.TRAINING_DIR + self.captureName):
+            os.makedirs(ToolsConfig.TRAINING_DIR + self.captureName)
+        # Find the largest ID of existing positive images.
+        # Start new images after this ID value.
+        files = sorted(glob.glob(os.path.join(ToolsConfig.TRAINING_DIR,
+                                              self.captureName, '[0-9][0-9][0-9].pgm')))
+        count = 0
+        if len(files) > 0:
+            # Grab the count from the last filename.
+            count = int(files[-1][-7:-4]) + 1
+        for filename in ToolsConfig.walkFiles(rawDir, '*'):
+            if not re.match('.+\.(jpg|jpeg)$', filename, re.IGNORECASE):
+                print("file {0} does not have the correct file extention."
+                      .format(filename))
+                continue
+            print("processing {0}".format(filename))
+            image = cv2.imread(filename)
+            height, width, channels = image.shape
             image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+            # TODO: check for multiple faces and warn
             # Get coordinates of single face in captured image.
             result = face.detect_single(image)
             if result is None:
-                print('Could not detect single face!'
-                      + ' Check the image in capture.pgm'
-                      + ' to see what was captured and try'
-                      + ' again with only one face visible.')
-                continue
-            x, y, w, h = result
-            # Crop image as close as possible to desired face aspect ratio.
-            # Might be smaller if face is near edge of image.
-            crop = face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
-            # Save image to file.
-            filename = toolsConfig.getNewCaptureFile()
-            cv2.imwrite(filename, crop)
-            print('Found face and wrote training image', filename)
-        except KeyboardInterrupt:
-            camera.stop()
-            break
-
-
-def convert():
-   
-    # Create the directory for positive training images if it doesn't exist.
-    if not os.path.exists(ToolsConfig.TRAINING_DIR + CAPTURE_DIR):
-        os.makedirs(ToolsConfig.TRAINING_DIR + CAPTURE_DIR)
-    # Find the largest ID of existing positive images.
-    # Start new images after this ID value.
-    files = sorted(glob.glob(os.path.join(ToolsConfig.TRAINING_DIR,
-                                          CAPTURE_DIR, '[0-9][0-9][0-9].pgm')))
-    count = 0
-    if len(files) > 0:
-        # Grab the count from the last filename.
-        count = int(files[-1][-7:-4]) + 1
-    for filename in ToolsConfig.walkFiles(RAW_DIR, '*'):
-        if not re.match('.+\.(jpg|jpeg)$', filename, re.IGNORECASE):
-            print("file {0} does not have the correct file extention."
-                  .format(filename))
-            continue
-        print("processing {0}".format(filename))
-        image = cv2.imread(filename)
-        height, width, channels = image.shape
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
-        # TODO: check for multiple faces and warn
-        # Get coordinates of single face in captured image.
-        result = face.detect_single(image)
-        if result is None:
-            if (height + width > 800):
-                # it's a big image resize it and try again
-                mult = 0.5
-                print('Resizing from ({0},{1}) -> ({2},{3})'
-                      .format(height, width,
-                              int(mult*height), int(mult*width)))
-                image2 = cv2.resize(image, None, fx=mult, fy=mult)
-                result = face.detect_single(image2)
-                if result is None:
-                    mult = 0.25
+                if (height + width > 800):
+                    # it's a big image resize it and try again
+                    mult = 0.5
                     print('Resizing from ({0},{1}) -> ({2},{3})'
                           .format(height, width,
                                   int(mult*height), int(mult*width)))
                     image2 = cv2.resize(image, None, fx=mult, fy=mult)
                     result = face.detect_single(image2)
-                if result is not None:
-                    print('It worked, found a face in resized image!')
-                    image = image2
-            if result is None:
-                print('No face found')
-                continue
-        x, y, w, h = result
-        # Crop image as close as possible to desired face aspect ratio.
-        # Might be smaller if face is near edge of image.
-        crop = face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
-        # Save image to file.
-        filename = os.path.join(ToolsConfig.TRAINING_DIR,
-                                CAPTURE_DIR, '%03d.pgm' % count)
-        cv2.imwrite(filename, crop)
-        print('Found face and wrote training image', filename)
-        count += 1
+                    if result is None:
+                        mult = 0.25
+                        print('Resizing from ({0},{1}) -> ({2},{3})'
+                              .format(height, width,
+                                      int(mult*height), int(mult*width)))
+                        image2 = cv2.resize(image, None, fx=mult, fy=mult)
+                        result = face.detect_single(image2)
+                    if result is not None:
+                        print('It worked, found a face in resized image!')
+                        image = image2
+                if result is None:
+                    print('No face found')
+                    continue
+            x, y, w, h = result
+            # Crop image as close as possible to desired face aspect ratio.
+            # Might be smaller if face is near edge of image.
+            crop = face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
+            # Save image to file.
+            filename = os.path.join(ToolsConfig.TRAINING_DIR,
+                                    self.captureName, '%03d.pgm' % count)
+            cv2.imwrite(filename, crop)
+            print('Found face and wrote training image', filename)
+            count += 1

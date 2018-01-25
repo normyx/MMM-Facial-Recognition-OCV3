@@ -9,7 +9,6 @@ Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 import cv2  # OpenCV Library
 from lib.common.face import FaceDetection
 from lib.tools.config import ToolsConfig
-#import lib.common.commonconfig as commonconfig
 import time
 import os
 import signal
@@ -24,9 +23,7 @@ face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
                      ToolsConfig.HAAR_MIN_SIZE_EYES, 
                      ToolsConfig.HAAR_EYES)
 
-# set preview to False to disable picamera preview
-preview = True
-camera = ToolsConfig.getCamera(preview)
+camera = ToolsConfig.getCamera()
 
 print('Loading training data...')
 model.read("training.xml")

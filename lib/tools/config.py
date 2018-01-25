@@ -85,11 +85,11 @@ class ToolsConfig (CommonConfig):
 
         
     @classmethod
-    def getCamera(cls, preview=True):
+    def getCamera(cls):
         try:
             import picam
             print("Loading PiCamera")
-            capture = picam.OpenCVCapture(preview)
+            capture = picam.OpenCVCapture(True)
             print("PiCamera loaded")
             capture.start()
             return capture
