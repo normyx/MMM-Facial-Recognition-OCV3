@@ -9,7 +9,6 @@ from __future__ import division
 # need to run `pip install future` for builtins (python 2 & 3 compatibility)
 from   builtins import input
 
-import fnmatch
 import glob
 import os
 import sys
@@ -18,41 +17,25 @@ import re
 import cv2
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 
-from . import config
-import commonconfig
+from config import ToolsConfig
+#import commonconfig
 from face import FaceDetection
 
-face = FaceDetection(commonconfig.HAAR_SCALE_FACTOR,
-                     commonconfig.HAAR_MIN_NEIGHBORS_FACE,
-                     commonconfig.HAAR_MIN_SIZE_FACE,
-                     commonconfig.HAAR_FACES)
+face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
+                     ToolsConfig.HAAR_MIN_NEIGHBORS_FACE,
+                     ToolsConfig.HAAR_MIN_SIZE_FACE,
+                     ToolsConfig.HAAR_FACES)
 
 def is_letter_input(letter):
     input_char = input()
     return input_char.lower()
 
 
-def walk_files(directory, match='*'):
-    """Generator function to iterate through all files in a directory
-    recursively which match the given filename match parameter.
-    """
-    for root, dirs, files in os.walk(directory):
-        for filename in fnmatch.filter(files, match):
-            yield os.path.join(root, filename)
 
 
 def capture(preview):
-    camera = config.get_camera(preview)
-    # Create the directory for positive training images if it doesn't exist.
-    if not os.path.exists(config.TRAINING_DIR + CAPTURE_DIR):
-        os.makedirs(config.TRAINING_DIR + CAPTURE_DIR)
-    # Find the largest ID of existing positive images.
-    # Start new images after this ID value.
-    files = sorted(glob.glob(os.path.join(config.TRAINING_DIR + CAPTURE_DIR, '[0-9][0-9][0-9].pgm')))
-    count = 0
-    if len(files) > 0:
-        # Grab the count from the last filename.
-        count = int(files[-1][-7:-4]) + 1
+    toolsConfig = ToolsConfig(CAPTURE_DIR)
+    camera = toolsConfig.getCamera(preview)
     print('Capturing positive training images.')
     print('Press enter to capture an image.')
     print('Press Ctrl-C to quit.')
@@ -74,32 +57,30 @@ def capture(preview):
             x, y, w, h = result
             # Crop image as close as possible to desired face aspect ratio.
             # Might be smaller if face is near edge of image.
-            crop = face.crop(image, x, y, w, h,int((commonconfig.FACE_HEIGHT / float(commonconfig.FACE_WIDTH)) * w))
+            crop = face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
             # Save image to file.
-            filename = os.path.join(config.TRAINING_DIR,
-                                    CAPTURE_DIR,
-                                    '%03d.pgm' % count)
+            filename = toolsConfig.getNewCaptureFile()
             cv2.imwrite(filename, crop)
             print('Found face and wrote training image', filename)
-            count += 1
         except KeyboardInterrupt:
             camera.stop()
             break
 
 
 def convert():
+   
     # Create the directory for positive training images if it doesn't exist.
-    if not os.path.exists(config.TRAINING_DIR + CAPTURE_DIR):
-        os.makedirs(config.TRAINING_DIR + CAPTURE_DIR)
+    if not os.path.exists(ToolsConfig.TRAINING_DIR + CAPTURE_DIR):
+        os.makedirs(ToolsConfig.TRAINING_DIR + CAPTURE_DIR)
     # Find the largest ID of existing positive images.
     # Start new images after this ID value.
-    files = sorted(glob.glob(os.path.join(config.TRAINING_DIR,
+    files = sorted(glob.glob(os.path.join(ToolsConfig.TRAINING_DIR,
                                           CAPTURE_DIR, '[0-9][0-9][0-9].pgm')))
     count = 0
     if len(files) > 0:
         # Grab the count from the last filename.
         count = int(files[-1][-7:-4]) + 1
-    for filename in walk_files(RAW_DIR, '*'):
+    for filename in ToolsConfig.walkFiles(RAW_DIR, '*'):
         if not re.match('.+\.(jpg|jpeg)$', filename, re.IGNORECASE):
             print("file {0} does not have the correct file extention."
                   .format(filename))
@@ -136,9 +117,9 @@ def convert():
         x, y, w, h = result
         # Crop image as close as possible to desired face aspect ratio.
         # Might be smaller if face is near edge of image.
-        crop = face.crop(image, x, y, w, h,int((commonconfig.FACE_HEIGHT / float(commonconfig.FACE_WIDTH)) * w))
+        crop = face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
         # Save image to file.
-        filename = os.path.join(config.TRAINING_DIR,
+        filename = os.path.join(ToolsConfig.TRAINING_DIR,
                                 CAPTURE_DIR, '%03d.pgm' % count)
         cv2.imwrite(filename, crop)
         print('Found face and wrote training image', filename)

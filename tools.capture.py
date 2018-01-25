@@ -7,7 +7,7 @@ Copyright (c) 2018 Mathieu Goulène (MIT License)
 Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
 import lib.tools.capture as capture
-import lib.tools.config as config
+from lib.tools.config import ToolsConfig
 
 # to install builtins run `pip install future` 
 from builtins import input
@@ -22,7 +22,7 @@ choice = int(input("--> "))
 print("")
 print("Enter the name of the person you want to capture or convert images for.")
 capture.CAPTURE_DIR = str(input("--> "))
-print("Images will be placed in " + config.TRAINING_DIR + capture.CAPTURE_DIR)
+print("Images will be placed in " + ToolsConfig.TRAINING_DIR + capture.CAPTURE_DIR)
 
 if choice == 1:
     print("")

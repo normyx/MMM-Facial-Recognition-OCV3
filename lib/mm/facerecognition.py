@@ -21,22 +21,13 @@ import json
 import time
 from face import FaceDetection
 import cv2
-import config as mmconfig
-import commonconfig as commonconfig
+from config import MMConfig
+#import commonconfig as commonconfig
 import signal
 
-def to_node(type, message):
-    # convert to json and print (node helper will read from stdout)
-    try:
-        print(json.dumps({type: message}))
-    except Exception:
-        pass
-    # stdout has to be flushed manually to prevent delays in the node helper communication
-    sys.stdout.flush()
 
 
-
-to_node("status", "Facerecognition started...")
+MMConfig.toNode("status", "Facerecognition started...")
 
 # Setup variables
 current_user = None
@@ -46,20 +37,20 @@ login_timestamp = time.time()
 same_user_detected_in_row = 0
 
 # Load training data into model
-to_node("status", 'Loading training data...')
+MMConfig.toNode("status", 'Loading training data...')
 
 # load the model
-model = cv2.face.LBPHFaceRecognizer_create(threshold=mmconfig.get("lbphThreshold"))
+model = cv2.face.LBPHFaceRecognizer_create(threshold=MMConfig.get("lbphThreshold"))
 
 # Load training file specified in config.js
-model.read(mmconfig.get("trainingFile"))
-to_node("status", 'Training data loaded!')
+model.read(MMConfig.get("trainingFile"))
+MMConfig.toNode("status", 'Training data loaded!')
 
 # get camera
-camera = mmconfig.get_camera()
+camera = MMConfig.getCamera()
 
 def shutdown(self, signum):
-    to_node("status", 'Shutdown: Cleaning up camera...')
+    MMConfig.toNode("status", 'Shutdown: Cleaning up camera...')
     camera.stop()
     quit()
 
@@ -68,15 +59,15 @@ signal.signal(signal.SIGINT, shutdown)
 # sleep for a second to let the camera warm up
 time.sleep(1)
 
-face = FaceDetection(commonconfig.HAAR_SCALE_FACTOR,
-                     commonconfig.HAAR_MIN_NEIGHBORS_FACE,
-                     commonconfig.HAAR_MIN_SIZE_FACE,
-                     commonconfig.HAAR_FACES)
+face = FaceDetection(MMConfig.HAAR_SCALE_FACTOR,
+                     MMConfig.HAAR_MIN_NEIGHBORS_FACE,
+                     MMConfig.HAAR_MIN_SIZE_FACE,
+                     MMConfig.HAAR_FACES)
 
 # Main Loop
 while True:
     # Sleep for x seconds specified in module config
-    time.sleep(mmconfig.get("interval"))
+    time.sleep(MMConfig.get("interval"))
     # if detecion is true, will be used to disable detection if you use a PIR sensor and no motion is detected
     if detection_active is True:
         # Get image
@@ -88,16 +79,16 @@ while True:
         # No face found, logout user?
         if result is None:
             # if last detection exceeds timeout and there is someone logged in -> logout!
-            if (current_user is not None and time.time() - login_timestamp > mmconfig.get("logoutDelay")):
+            if (current_user is not None and time.time() - login_timestamp > MMConfig.get("logoutDelay")):
                 # callback logout to node helper
-                to_node("logout", {"user": current_user})
+                MMConfig.toNode("logout", {"user": current_user})
                 same_user_detected_in_row = 0
                 current_user = None
             continue
         # Set x,y coordinates, height and width from face detection result
         x, y, w, h = result
         # Crop image on face. If algorithm is not LBPH also resize because in all other algorithms image resolution has to be the same as training image resolution.
-        crop = face.crop(image, x, y, w, h,int((commonconfig.FACE_HEIGHT / float(commonconfig.FACE_WIDTH)) * w))
+        crop = face.crop(image, x, y, w, h,int((MMConfig.FACE_HEIGHT / float(MMConfig.FACE_WIDTH)) * w))
         # Test face against model.
         label, confidence = model.predict(crop)
         # We have a match if the label is not "-1" which equals unknown because of exceeded threshold and is not "0" which are negtive training images (see training folder).
@@ -115,7 +106,7 @@ while True:
             if (label != current_user and same_user_detected_in_row > 1):
                 current_user = label
                 # Callback current user to node helper
-                to_node("login", {"user": label, "confidence": str(confidence)})
+                MMConfig.toNode("login", {"user": label, "confidence": str(confidence)})
             # set last_match to current prediction
             last_match = label
         # if label is -1 or 0, current_user is not already set to unknown and last prediction match was at least 5 seconds ago
@@ -126,6 +117,6 @@ while True:
             # set current_user to unknown
             current_user = 0
             # callback to node helper
-            to_node("login", {"user": current_user, "confidence": None})
+            MMConfig.toNode("login", {"user": current_user, "confidence": None})
         else:
             continue

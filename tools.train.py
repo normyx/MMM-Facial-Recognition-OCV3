@@ -16,31 +16,23 @@ from builtins import input
 import cv2
 import numpy as np
 
-import lib.tools.config as config
+from lib.tools.config import ToolsConfig
 from lib.common.face import FaceDetection
-import lib.common.commonconfig as commonconfig
+#import lib.common.commonconfig as commonconfig
 
-face = FaceDetection(commonconfig.HAAR_SCALE_FACTOR,
-                     commonconfig.HAAR_MIN_NEIGHBORS_FACE,
-                     commonconfig.HAAR_MIN_SIZE_FACE,
-                     commonconfig.HAAR_FACES)
+face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
+                     ToolsConfig.HAAR_MIN_NEIGHBORS_FACE,
+                     ToolsConfig.HAAR_MIN_SIZE_FACE,
+                     ToolsConfig.HAAR_FACES)
 
 
-
-def walk_files(directory, match='*'):
-    """Generator function to iterate through all files in a directory recursively
-    which match the given filename match parameter.
-    """
-    for root, dirs, files in os.walk(directory):
-        for filename in fnmatch.filter(files, match):
-            yield os.path.join(root, filename)
 
 
 def prepare_image(filename):
     """Read an image as grayscale and resize it to the appropriate size for
     training the face recognition model.
     """
-    return face.resize(cv2.imread(filename, cv2.IMREAD_GRAYSCALE),commonconfig.FACE_WIDTH, commonconfig.FACE_HEIGHT)
+    return face.resize(cv2.imread(filename, cv2.IMREAD_GRAYSCALE),ToolsConfig.FACE_WIDTH, ToolsConfig.FACE_HEIGHT)
 
 
 def normalize(X, low, high, dtype=None):
@@ -67,7 +59,7 @@ if __name__ == '__main__':
     faces = []
     labels = []
     IMAGE_DIRS_WITH_LABEL = [[0, "negative"]]
-    IMAGE_DIRS = os.listdir(config.TRAINING_DIR)
+    IMAGE_DIRS = os.listdir(ToolsConfig.TRAINING_DIR)
     IMAGE_DIRS = [x for x in IMAGE_DIRS if not x.startswith('.') and not x.startswith('negative')]
     pos_count = 0
 
@@ -81,14 +73,14 @@ if __name__ == '__main__':
     # for every label/name pair:
     for j in range(0, len(IMAGE_DIRS_WITH_LABEL)):
         # Label zu den Labels hinzufügen / Bilder zu den Gesichtern
-        for filename in walk_files(config.TRAINING_DIR + str(IMAGE_DIRS_WITH_LABEL[j][1]), '*.pgm'):
+        for filename in ToolsConfig.walkFiles(ToolsConfig.TRAINING_DIR + str(IMAGE_DIRS_WITH_LABEL[j][1]), '*.pgm'):
             faces.append(prepare_image(filename))
             labels.append(IMAGE_DIRS_WITH_LABEL[j][0])
             if IMAGE_DIRS_WITH_LABEL[j][0] != 0:
                 pos_count += 1
 
     # Print statistic on how many pictures per person we have collected
-    print('Read', pos_count, 'positive images and', labels.count(0), 'negative images.')
+    print('Read '  + str(pos_count) + ' positive images and ' + str(labels.count(0)) + ' negative images.')
     print('')
     for j in range(1, max(labels) + 1):
         print(str(labels.count(j)) + " images from subject " + IMAGE_DIRS[j - 1])
@@ -97,13 +89,13 @@ if __name__ == '__main__':
     print('-' * 20)
     print('')
     print('Training model with threshold {0}'
-          .format(config.POSITIVE_THRESHOLD))
-    model = commonconfig.model(config.POSITIVE_THRESHOLD)
+          .format(ToolsConfig.POSITIVE_THRESHOLD))
+    model = ToolsConfig.model(ToolsConfig.POSITIVE_THRESHOLD)
 
     model.train(np.asarray(faces), np.asarray(labels))
 
     # Save model results
-    model.write(config.TRAINING_FILE)
-    print('Training data saved to', config.TRAINING_FILE)
+    model.write(ToolsConfig.TRAINING_FILE)
+    print('Training data saved to', ToolsConfig.TRAINING_FILE)
     print('')
     print("Please add or update (if you added new people not just new images) " + str(IMAGE_DIRS) + " inside config.js (mirror module) or config.py (model tester). You can change the names to whatever you want, just keep the same order and you'll be fine.")
