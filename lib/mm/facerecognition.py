@@ -22,7 +22,6 @@ import time
 from face import FaceDetection
 import cv2
 from config import MMConfig
-#import commonconfig as commonconfig
 import signal
 
 

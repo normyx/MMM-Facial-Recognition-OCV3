@@ -72,7 +72,7 @@ class ToolsConfig (CommonConfig):
         if len(files) > 0:
             # Grab the count from the last filename.
             count = int(files[-1][-7:-4]) + 1
-        return self.getCapturedFiles('%03d.pgm' % count)
+        return self.getCapturedFiles('%03d.pgm' % count), count
 
     @classmethod
     def walkFiles(cls, directory, match='*'):
