@@ -6,22 +6,16 @@ The MIT License (MIT)
 Copyright (c) 2018 Mathieu Goulène (MIT License)
 Based on work by Paul-Vincent Roll (Copyright 2016) (MIT License)
 """
-import inspect
 import os
 import sys
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 from commonconfig import CommonConfig
+from face import FaceDetection
 import platform
 import cv2
 import fnmatch
 
 import glob
-
-
-
-#_platform = platform.system().lower()
-#path_to_file = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-
 
 
 
@@ -74,6 +68,8 @@ class ToolsConfig (CommonConfig):
             count = int(files[-1][-7:-4]) + 1
         return self.getCapturedFiles('%03d.pgm' % count), count
 
+
+    
     @classmethod
     def walkFiles(cls, directory, match='*'):
         """Generator function to iterate through all files in a directory

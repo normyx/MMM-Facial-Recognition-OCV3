@@ -11,6 +11,7 @@ It has been adapted to :
 * Mutualize some code and move some of into Classes
 * Explain the way to build and install OpenCV 3.3.0 (required, the version is not available into a repository)
 * Remove the Fisher and Eigen Algorithm that did not work well for Raspberry. Only LBPH Algorithm is usable.
+
 Get this module with the command line :
 ```shell=
 cd ~/MagicMirror/modules/
@@ -101,6 +102,10 @@ Install the need dependencies by running the command :
 ```shell=
 npm install
 ```
+If you will run the different tools with Python 2.7, install the cross-compatible features with :
+```shell=
+pip install future
+```
 ## Capture and Train the model
 
 
@@ -116,15 +121,11 @@ npm install
 1. Copy down the `['name1', 'name2','name3']` part because you will later need it for setting up your mirror's face recognition and to test your face recognition model.
 ### Test your trained model
 1. Make sure your training.xml from running train.py is in this directory
-1. Specify the face recognition algorithm in the environment with
-```shell=
-export FACE_ALGORITHM=1
-```
-3. Specify your user labels in the environment with
+1. Specify your user labels in the environment with
 ```shell=
 export FACE_USERS=name1,name2,name3
 ```
-4. Run `python toolsfacerecognition.py` to test your trained model.
+3. Run `python tools.facerecognition.py` to test your trained model.
 
 # Setup the module
 To setup the module in MagicMirror², add the following script int the `config.js` file in the `config/` MagicMirror² directory (Modify the script regarding the Algorithm, file location, ...).
@@ -136,7 +137,7 @@ To setup the module in MagicMirror², add the following script int the `config.j
         // positive match.  Confidence values below this threshold will be considered
         // a positive match because the lower the confidence value, or distance, the
         // more confident the algorithm is that the face was correctly detected.
-        lbphThreshold: 80,
+        threshold: 80,
         // force the use of a usb webcam on raspberry pi (on other platforms this is always true automatically)
         useUSBCam: false,
         // Path to your training xml
@@ -173,9 +174,6 @@ In order for this module to do anything useful you have to assign custom classes
 }
 ```
 # TODO
-* Explain removing the other algorithm
-* Explain the modification of haar file in mm/config.py
-* Move all script to OO Classes
-* Centralized the constant and params in only one config file
+* Test with WebCam
 [^first]: [Raspbian Stretch: Install OpenCV 3 + Python on your Raspberry Pi](https://www.pyimagesearch.com/2017/09/04/raspbian-stretch-install-opencv-3-python-on-your-raspberry-pi/) give a complete and very detailed explaination to build OpenCV 3, but based on python work environment. The choice here is to build and install the library deeply in the raspberry system.
 [^second]: [How to easily install OpenCV 3+ on Raspberry Pi 2/3 in Raspbian ? (without using virtual environments)](http://pythonopencv.com/how-to-easily-install-opencv-3-on-raspberry-pi-23-in-raspbian-without-using-virtual-environments/) More synthetic but is adapted to be able to manage memory issues during compilation.

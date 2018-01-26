@@ -15,14 +15,7 @@ import signal
 import sys
 
 model = ToolsConfig.model()
-face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
-                     ToolsConfig.HAAR_MIN_NEIGHBORS_FACE,
-                     ToolsConfig.HAAR_MIN_SIZE_FACE,
-                     ToolsConfig.HAAR_FACES,
-                     ToolsConfig.HAAR_MIN_NEIGHBORS_EYES, 
-                     ToolsConfig.HAAR_MIN_SIZE_EYES, 
-                     ToolsConfig.HAAR_EYES)
-
+face = ToolsConfig.getFaceAndEyesDetection()
 camera = ToolsConfig.getCamera()
 
 print('Loading training data...')
@@ -67,7 +60,7 @@ while True:
             # x and y coordinates of the face
             x_face = x
             y_face = y
-            crop = face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
+            crop = face.crop(image, x, y, w, h,int(ToolsConfig.getFaceFactor() * w))
 			
 			# confidence the lower the stronger the match
 			

@@ -9,7 +9,6 @@ from __future__ import division
 # need to run `pip install future` for builtins (python 2 & 3 compatibility)
 from   builtins import input
 
-import glob
 import os
 import sys
 import re
@@ -22,10 +21,7 @@ from face import FaceDetection
 
 class ToolsCapture:
     def __init__(self, capName=None):
-        self.face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
-                     ToolsConfig.HAAR_MIN_NEIGHBORS_FACE,
-                     ToolsConfig.HAAR_MIN_SIZE_FACE,
-                     ToolsConfig.HAAR_FACES)
+        self.face = ToolsConfig.getFaceDetection()
         self.captureName = capName
                      
 
@@ -54,7 +50,7 @@ class ToolsCapture:
                 x, y, w, h = result
                 # Crop image as close as possible to desired face aspect ratio.
                 # Might be smaller if face is near edge of image.
-                crop = self.face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
+                crop = self.face.crop(image, x, y, w, h,int(ToolsConfig.getFaceFactor() * w))
                 # Save image to file.
                 filename, count = toolsConfig.getNewCaptureFile()
                 cv2.imwrite(filename, crop)
@@ -105,7 +101,7 @@ class ToolsCapture:
             x, y, w, h = result
             # Crop image as close as possible to desired face aspect ratio.
             # Might be smaller if face is near edge of image.
-            crop = self.face.crop(image, x, y, w, h,int((ToolsConfig.FACE_HEIGHT / float(ToolsConfig.FACE_WIDTH)) * w))
+            crop = self.face.crop(image, x, y, w, h,int(ToolsConfig.getFaceFactor() * w))
             # Save image to file.
             toFilename = os.path.join(ToolsConfig.TRAINING_DIR,
                                     self.captureName, '%03d.pgm' % count)

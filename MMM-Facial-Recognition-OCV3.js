@@ -14,7 +14,7 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 		// positive match.  Confidence values below this threshold will be considered
 		// a positive match because the lower the confidence value, or distance, the
 		// more confident the algorithm is that the face was correctly detected.
-		lbphThreshold: 50,
+		threshold: 50,
 		// force the use of a usb webcam on raspberry pi (on other platforms this is always true automatically)
 		useUSBCam: false,
 		// Path to your training xml

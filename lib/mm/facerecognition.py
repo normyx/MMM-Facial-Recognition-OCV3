@@ -17,7 +17,6 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 import sys
 import os
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
-import json
 import time
 from face import FaceDetection
 import cv2
@@ -39,10 +38,10 @@ same_user_detected_in_row = 0
 MMConfig.toNode("status", 'Loading training data...')
 
 # load the model
-model = cv2.face.LBPHFaceRecognizer_create(threshold=MMConfig.get("lbphThreshold"))
+model = cv2.face.LBPHFaceRecognizer_create(threshold=MMConfig.getThreshold())
 
 # Load training file specified in config.js
-model.read(MMConfig.get("trainingFile"))
+model.read(MMConfig.getTrainingFile())
 MMConfig.toNode("status", 'Training data loaded!')
 
 # get camera
@@ -58,15 +57,12 @@ signal.signal(signal.SIGINT, shutdown)
 # sleep for a second to let the camera warm up
 time.sleep(1)
 
-face = FaceDetection(MMConfig.HAAR_SCALE_FACTOR,
-                     MMConfig.HAAR_MIN_NEIGHBORS_FACE,
-                     MMConfig.HAAR_MIN_SIZE_FACE,
-                     MMConfig.HAAR_FACES)
+face = MMConfig.getFaceDetection()
 
 # Main Loop
 while True:
     # Sleep for x seconds specified in module config
-    time.sleep(MMConfig.get("interval"))
+    time.sleep(MMConfig.getInterval())
     # if detecion is true, will be used to disable detection if you use a PIR sensor and no motion is detected
     if detection_active is True:
         # Get image
@@ -78,7 +74,7 @@ while True:
         # No face found, logout user?
         if result is None:
             # if last detection exceeds timeout and there is someone logged in -> logout!
-            if (current_user is not None and time.time() - login_timestamp > MMConfig.get("logoutDelay")):
+            if (current_user is not None and time.time() - login_timestamp > MMConfig.getLogoutDelay()):
                 # callback logout to node helper
                 MMConfig.toNode("logout", {"user": current_user})
                 same_user_detected_in_row = 0
@@ -87,7 +83,7 @@ while True:
         # Set x,y coordinates, height and width from face detection result
         x, y, w, h = result
         # Crop image on face. If algorithm is not LBPH also resize because in all other algorithms image resolution has to be the same as training image resolution.
-        crop = face.crop(image, x, y, w, h,int((MMConfig.FACE_HEIGHT / float(MMConfig.FACE_WIDTH)) * w))
+        crop = face.crop(image, x, y, w, h,int(MMConfig.getFaceFactor() * w))
         # Test face against model.
         label, confidence = model.predict(crop)
         # We have a match if the label is not "-1" which equals unknown because of exceeded threshold and is not "0" which are negtive training images (see training folder).

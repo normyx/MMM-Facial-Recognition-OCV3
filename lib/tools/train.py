@@ -12,7 +12,6 @@ from builtins import input
 
 import cv2
 import numpy as np
-import fnmatch
 import os
 
 from lib.tools.config import ToolsConfig
@@ -21,10 +20,7 @@ from lib.common.face import FaceDetection
 class ToolsTrain:
     def __init__(self):
         
-        self.face = FaceDetection(ToolsConfig.HAAR_SCALE_FACTOR,
-                     ToolsConfig.HAAR_MIN_NEIGHBORS_FACE,
-                     ToolsConfig.HAAR_MIN_SIZE_FACE,
-                     ToolsConfig.HAAR_FACES)
+        self.face = ToolsConfig.getFaceDetection()
     
     def prepareImage(self, filename):
         """Read an image as grayscale and resize it to the appropriate size for
@@ -32,23 +28,6 @@ class ToolsTrain:
         """
         return self.face.resize(cv2.imread(filename, cv2.IMREAD_GRAYSCALE),ToolsConfig.FACE_WIDTH, ToolsConfig.FACE_HEIGHT)
 
-    """@classmethod
-    def normalize(cls, X, low, high, dtype=None):
-        Normalizes a given array in X to a value between low and high.
-        Adapted from python OpenCV face recognition example at:
-        https://github.com/Itseez/opencv/blob/2.4/samples/python2/facerec_demo.py
-        "
-        X = np.asarray(X)
-        minX, maxX = np.min(X), np.max(X)
-        # normalize to [0...1].
-        X = X - float(minX)
-        X = X / float((maxX - minX))
-        # scale to [low...high].
-        X = X * (high - low)
-        X = X + low
-        if dtype is None:
-            return np.asarray(X)
-        return np.asarray(X, dtype=dtype)"""
     
     def train(self):
         print("Reading training images...")
