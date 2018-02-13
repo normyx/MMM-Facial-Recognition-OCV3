@@ -131,7 +131,7 @@ export FACE_USERS=name1,name2,name3
 To setup the module in MagicMirror², add the following script int the `config.js` file in the `config/` MagicMirror² directory (Modify the script regarding the Algorithm, file location, ...).
 ```javascript
 {
-    module: 'MMM-Facial-Recognition',
+    module: 'MMM-Facial-Recognition-OCV3',
     config: {
         // Threshold for the confidence of a recognized face before it's considered a
         // positive match.  Confidence values below this threshold will be considered
@@ -141,7 +141,7 @@ To setup the module in MagicMirror², add the following script int the `config.j
         // force the use of a usb webcam on raspberry pi (on other platforms this is always true automatically)
         useUSBCam: false,
         // Path to your training xml
-        trainingFile: '/home/pi/MagicMirror/modules/MMM-Facial-Recognition-OC3/training.xml',
+        trainingFile: '/home/pi/MagicMirror/modules/MMM-Facial-Recognition-OCV3/training.xml',
         // recognition intervall in seconds (smaller number = faster but CPU intens!)
         interval: 2,
         // Logout delay after last recognition so that a user does not get instantly logged out if he turns away from the mirror for a few seconds
