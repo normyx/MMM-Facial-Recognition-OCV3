@@ -16,7 +16,7 @@ import re
 import cv2
 sys.path.append((os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))+ '/common/'))
 
-from config import ToolsConfig
+from .config import ToolsConfig
 from face import FaceDetection
 
 class ToolsCapture:
