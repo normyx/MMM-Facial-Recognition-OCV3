@@ -38,9 +38,9 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 		return {
 			en: "translations/en.json",
 			de: "translations/de.json",
-      			es: "translations/es.json",
-      			zh: "translations/zh.json",
-      			nl: "translations/nl.json",
+			es: "translations/es.json",
+			zh: "translations/zh.json",
+			nl: "translations/nl.json",
 			sv: "translations/sv.json",
 			fr: "translations/fr.json",
 			id: "translations/id.json"
@@ -49,7 +49,7 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 
 	login_user: function () {
 
-    var self = this;
+		var self = this;
 
 		MM.getModules().withClass(this.config.defaultClass).exceptWithClass(this.config.everyoneClass).enumerate(function(module) {
 			module.hide(1000, function() {
@@ -67,7 +67,7 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 	},
 	logout_user: function () {
 
-    var self = this;
+		var self = this;
 
 		MM.getModules().withClass(this.current_user).enumerate(function(module) {
 			module.hide(1000, function() {
@@ -112,7 +112,7 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 
 	notificationReceived: function(notification, payload, sender) {
 		if (notification === 'DOM_OBJECTS_CREATED') {
-      var self = this;
+			var self = this;
 			MM.getModules().exceptWithClass("default").enumerate(function(module) {
 				module.hide(1000, function() {
 					Log.log('Module is hidden.');
