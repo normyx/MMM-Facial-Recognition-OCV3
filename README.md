@@ -153,7 +153,9 @@ To setup the module in MagicMirror², add the following script int the `config.j
         //Set of modules which should be shown for every user
         everyoneClass: "everyone",
         // Boolean to toggle welcomeMessage
-        welcomeMessage: true
+        welcomeMessage: true,
+        // Only send notifications. For handling login actions in a different module.
+        notificationsOnly: false
     }
 }
 ```
