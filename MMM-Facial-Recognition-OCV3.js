@@ -30,7 +30,9 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 		//Set of modules which should be shown for every user
 		everyoneClass: "everyone",
 		// Boolean to toggle welcomeMessage
-		welcomeMessage: true
+		welcomeMessage: true,
+		// Only send notifications. For handling login actions in a different module.
+		notificationsOnly: false
 	},
 
 	// Define required translations.
@@ -38,9 +40,9 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 		return {
 			en: "translations/en.json",
 			de: "translations/de.json",
-      			es: "translations/es.json",
-      			zh: "translations/zh.json",
-      			nl: "translations/nl.json",
+			es: "translations/es.json",
+			zh: "translations/zh.json",
+			nl: "translations/nl.json",
 			sv: "translations/sv.json",
 			fr: "translations/fr.json",
 			id: "translations/id.json"
@@ -49,37 +51,41 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 
 	login_user: function () {
 
-    var self = this;
+		var self = this;
 
-		MM.getModules().withClass(this.config.defaultClass).exceptWithClass(this.config.everyoneClass).enumerate(function(module) {
-			module.hide(1000, function() {
-				Log.log(module.name + ' is hidden.');
-			}, {lockString: self.identifier});
-		});
+		if (!this.config.notificationsOnly) {
+			MM.getModules().withClass(this.config.defaultClass).exceptWithClass(this.config.everyoneClass).enumerate(function(module) {
+				module.hide(1000, function() {
+					Log.log(module.name + ' is hidden.');
+				}, {lockString: self.identifier});
+			});
 
-		MM.getModules().withClass(this.current_user).enumerate(function(module) {
-			module.show(1000, function() {
-				Log.log(module.name + ' is shown.');
-			}, {lockString: self.identifier});
-		});
+			MM.getModules().withClass(this.current_user).enumerate(function(module) {
+				module.show(1000, function() {
+					Log.log(module.name + ' is shown.');
+				}, {lockString: self.identifier});
+			});
+		}
 
 		this.sendNotification("CURRENT_USER", this.current_user);
 	},
 	logout_user: function () {
 
-    var self = this;
+		var self = this;
 
-		MM.getModules().withClass(this.current_user).enumerate(function(module) {
-			module.hide(1000, function() {
-				Log.log(module.name + ' is hidden.');
-			}, {lockString: self.identifier});
-		});
+		if (!this.config.notificationsOnly) {
+			MM.getModules().withClass(this.current_user).enumerate(function(module) {
+				module.hide(1000, function() {
+					Log.log(module.name + ' is hidden.');
+				}, {lockString: self.identifier});
+			});
 
-		MM.getModules().withClass(this.config.defaultClass).exceptWithClass(this.config.everyoneClass).enumerate(function(module) {
-			module.show(1000, function() {
-				Log.log(module.name + ' is shown.');
-			}, {lockString: self.identifier});
-		});
+			MM.getModules().withClass(this.config.defaultClass).exceptWithClass(this.config.everyoneClass).enumerate(function(module) {
+				module.show(1000, function() {
+					Log.log(module.name + ' is shown.');
+				}, {lockString: self.identifier});
+			});
+		}
 
 		this.sendNotification("CURRENT_USER", "None");
 	},
@@ -100,7 +106,7 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 				this.login_user()
 			}
 
-			if (this.config.welcomeMessage) {
+			if (this.config.welcomeMessage && !this.config.notificationsOnly) {
 				this.sendNotification("SHOW_ALERT", {type: "notification", message: this.translate("message").replace("%person", this.current_user), title: this.translate("title")});
 			}
 		}
@@ -111,8 +117,8 @@ Module.register('MMM-Facial-Recognition-OCV3',{
 	},
 
 	notificationReceived: function(notification, payload, sender) {
-		if (notification === 'DOM_OBJECTS_CREATED') {
-      var self = this;
+		if (notification === 'DOM_OBJECTS_CREATED' && !this.config.notificationsOnly) {
+			var self = this;
 			MM.getModules().exceptWithClass("default").enumerate(function(module) {
 				module.hide(1000, function() {
 					Log.log('Module is hidden.');
