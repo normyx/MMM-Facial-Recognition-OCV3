@@ -1,11 +1,11 @@
 
 # MMM-Facial-Recognition-OCV3
 This module is a facial recognition module (detection + recognition) for [MagicMirror²](https://magicmirror.builders/).
-This module is mainly inspired by the one developped by [paviro](https://github.com/paviro) : [MMM-Facial-Recognition](https:https://github.com/paviro/MMM-Facial-Recognition). 
+This module is mainly inspired by the one developed by [paviro](https://github.com/paviro) : [MMM-Facial-Recognition](https:https://github.com/paviro/MMM-Facial-Recognition). 
 [TOC]
 # Introduction
-This module uses the [OpenCV](https://opencv.org/) library and is only compatible with the v3 (only tested with the version 3.3 and the rest of the description is based on this version. Some adaptions will probably be needed to support other version).
-It has been adapted to :
+This module uses the [OpenCV](https://opencv.org/) library and is only compatible with the v3 (only tested with the version 3.3 and the rest of the description is based on this version. Some adaptation will probably be needed to support other version).
+It has been adapted to:
 * Be able to support the v3.3.0 OpenCV version (the paviro one did not)
 * Merge the 2 projects [MMM-Facial-Recognition](https://github.com/paviro/MMM-Facial-Recognition) (MagicMirror module) and [MMM-Facial-Recognition-Tools](https://github.com/paviro/MMM-Facial-Recognition-Tools) (tools to capture and train the model) into one project
 * Mutualize some code and move some of into Classes
@@ -18,12 +18,12 @@ cd ~/MagicMirror/modules/
 git clone https://github.com/normyx/MMM-Facial-Recognition-OCV3.git
 ```
 # Prepare the module
-This section explain the way to prepare the module, by installing the dependencies and train the model.
+This section explains the way to prepare the module, by installing the dependencies and train the model.
 ## Building OpenCV
 This is the most time consuming part, because the OpenCV library need to be build by the raspberry (it may take 2 hours).
 This section is a mix of 2 great articles found[^first][^second].
 ### Configuring the Raspberry
-First, install and update all the elements before compiling :
+First, install and update all the elements before compiling:
 ```shell=
 sudo apt-get update
 sudo apt-get upgrade
@@ -46,11 +46,11 @@ git checkout 3.3.0
 ```
 ### Build OpenCV
 This section may take long ...
-First get pip cross version :
+First get pip cross version:
 ```shell=
 wget https://bootstrap.pypa.io/get-pip.py
 ```
-Two Python alternatives to build OpenCV : v2.7 or v3.0
+Two Python alternatives to build OpenCV: v2.7 or v3.0
 > If using **Python v2.7** :
 ```shell=
 sudo apt-get install python2.7-dev
@@ -76,7 +76,7 @@ sudo /etc/init.d/dphys-swapfile start
 ```
 *It is possible to burn out the Raspberry Pi microSD card because flash memory has a limited number of writes until the card won’t work. It is highly recommended that you change this setting back to the default when you are done compiling and testing the install.* 
 
-And then, build OpenCV :
+And then, build OpenCV:
 ```shell=
 pip install numpy
 cd ~/opencv
@@ -94,11 +94,11 @@ sudo ldconfig
 ```
 After a long time, OpenCV is built and installed 
 ## Install the dependencies
-Go back to the MMM-Facial-Recognition-OCV3 modules directory :
+Go back to the MMM-Facial-Recognition-OCV3 modules directory:
 ```shell=
 cd ~/MagicMirror/modules/MMM-Facial-Recognition-OCV3
 ```
-Install the need dependencies by running the command :
+Install the need dependencies by running the command:
 ```shell=
 npm install
 ```
